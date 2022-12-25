@@ -1,0 +1,27 @@
+package main
+
+import (
+	"log"
+	"os"
+)
+
+func getFile(name string) (*os.File, func(), error) {
+	file, err := os.Open(name)
+	if err != nil {
+		return nil, nil, err
+	}
+	return file, func() {
+		err := file.Close()
+		if err != nil {
+			return
+		}
+	}, err
+}
+
+func main() {
+	_, closer, err := getFile(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer closer()
+}
